@@ -1,8 +1,11 @@
 const functions = require('firebase-functions');
+const admin = require('firebase-admin');
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
+admin.initializeApp();
+
+exports.addEmployee = functions.database.ref('/user/{userId}')
+    .onCreate((snapshot, context) => {
+        console.log('User created:', context.params.userId);
+        const user = snapshot.val();
+        return admin.database().ref('/employee').child(user.workerid).set({ 'email': user.email });
+    });
