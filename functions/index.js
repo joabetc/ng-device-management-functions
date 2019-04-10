@@ -12,6 +12,7 @@ exports.addEmployee = functions.database.ref('/user/{userId}')
 
 exports.employeeEmail = functions.https.onRequest((req, res) => {
     const workerid = req.query.id;
-    const email = admin.database().ref(`/employee/${workerid}/email`).once('value').then((snapshot) => snapshot.val());
-    res.send(email);
+    console.log(workerid);
+    return admin.database().ref('/employee/'+ workerid).once('value')
+        .then((snapshot) => res.send(snapshot.val().email));
 })
