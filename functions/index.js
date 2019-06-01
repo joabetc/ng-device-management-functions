@@ -30,3 +30,20 @@ exports.addAdminRole = functions.https.onCall((data, context) => {
         };
     });
 });
+
+exports.grantAdminRole = functions.auth.user().onCreate((user) => {
+    const email = user.email.replace(/\.|@/g, '|');
+    return admin.database().ref('/custom-claims/' + email).once('value')
+        .then((snapshot) => grantRoleByEmail(user.email, snapshot.val()));
+});
+
+function grantRoleByEmail(email, role) {
+    return admin.auth().getUserByEmail(email).then((user) => {
+        console.log("user.customClaims: " + user.customClaims);
+        if (user.customClaims === undefined || user.customClaims.isAdmin !== true) {
+            console.log("grantRoleByEmail");
+            return admin.auth().setCustomUserClaims(user.uid, role);
+        }
+        return;
+    });
+}
