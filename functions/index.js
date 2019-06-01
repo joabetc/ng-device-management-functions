@@ -22,7 +22,7 @@ exports.addAdminRole = functions.https.onCall((data, context) => {
         return {
             error: "Request not authorized. User must be an administrator to fullfill request."
         }
-    };
+    }
     const email = data.email;
     return grantRoleByEmail(email, { isAdmin: true }).then(() => {
         return {
@@ -44,6 +44,6 @@ function grantRoleByEmail(email, role) {
             console.log("grantRoleByEmail");
             return admin.auth().setCustomUserClaims(user.uid, role);
         }
-        return;
+        return new Promise();
     });
 }
